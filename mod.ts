@@ -4,5 +4,7 @@ export type {
 } from "./lib/multiParserV2.ts";
 
 export {
-  multiParser
+  multiParser,
+  parseContentHeaderAndBuffer,
+  parseBoundaryAndBuffer
 } from './lib/multiParserV2.ts'
