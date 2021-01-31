@@ -40,13 +40,38 @@ export async function multiParser(req: ServerRequest | any, option?: any) {
       return undefined;
     }
 
-    const pieces = getFieldPieces(buf, boundaryByte!);
-
-    const form = getForm(pieces);
-    return form;
+    return parseBoundaryAndBuffer(boundaryByte, buf);
   } else {
     return undefined;
   }
+}
+
+/**
+ * Use this function if you've already extracted the body data and content-type header
+ * @param contentHeader content-type string extracted from ServerRequest header
+ * @param buf form data binary extracted from ServerRequest body
+ */
+export function parseContentHeaderAndBuffer(contentHeader: string, buf: Uint8Array) {
+  let boundaryByte = getBoundary(contentHeader);
+  if (!boundaryByte) {
+    // no boundary found, return
+    return undefined;
+  }
+
+  return parseBoundaryAndBuffer(boundaryByte, buf);
+}
+
+/**
+ * Use this function if you've already extracted the body data and boundary data
+ * @param boundaryByte Boundary extracted from content-type header
+ * @param buf form data binary extracted from ServerRequest body
+ */
+export function parseBoundaryAndBuffer(boundaryByte: Uint8Array, buf: Uint8Array) {
+  const pieces = getFieldPieces(buf, boundaryByte!);
+
+  const form = getForm(pieces);
+
+  return form;
 }
 
 function getForm(pieces: Uint8Array[]) {
